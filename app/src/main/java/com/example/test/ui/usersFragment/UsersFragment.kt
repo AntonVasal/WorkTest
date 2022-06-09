@@ -32,11 +32,7 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
         binding.lifecycleOwner = viewLifecycleOwner
         observeStates()
 
-        bottomSheetDialog = BottomSheetDialog(requireContext())
-        bottomSheetDialog.setContentView(R.layout.dialog_bottom_sheet_for_user)
-        listView = bottomSheetDialog.findViewById(R.id.repos_list)!!
-        imageView= bottomSheetDialog.findViewById(R.id.dialog_image)!!
-        textView = bottomSheetDialog.findViewById (R.id.dialog_text)!!
+        configureDialog()
         observeRepos()
 
         val adapter = UsersRecyclerViewAdapter(requireContext()) { createDialog(it) }
@@ -45,6 +41,14 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
         usersViewModel.users.observeNotNull(viewLifecycleOwner) {
            adapter.submitList(it)
         }
+    }
+
+    private fun configureDialog() {
+        bottomSheetDialog = BottomSheetDialog(requireContext())
+        bottomSheetDialog.setContentView(R.layout.dialog_bottom_sheet_for_user)
+        listView = bottomSheetDialog.findViewById(R.id.repos_list)!!
+        imageView= bottomSheetDialog.findViewById(R.id.dialog_image)!!
+        textView = bottomSheetDialog.findViewById (R.id.dialog_text)!!
     }
 
     private fun observeRepos() {
