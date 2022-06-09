@@ -26,8 +26,11 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
     private val _users = MutableLiveData<ArrayList<UserModel>>()
     val users: LiveData<ArrayList<UserModel>> = _users
 
+    private val _repos = MutableLiveData<ArrayList<String>>()
+    val repos:LiveData<ArrayList<String>> = _repos
+
     init {
-        getUsersWirthRealm()
+        getUsersWithRealm()
     }
 
     fun getUsersWithRetrofit(isEmpty: Boolean) {
@@ -47,7 +50,7 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
         }
     }
 
-    private fun getUsersWirthRealm() {
+    private fun getUsersWithRealm() {
         runCatching {
             usersRepository.getUsersWithRealm()
         }.onSuccess {
@@ -72,11 +75,41 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
 
     fun getUserReposWithRealm(login:String,id:Int){
         runCatching {
-
+            usersRepository.getReposWithRealm(id)
         }.onSuccess {
-
+            workWithRealmReposList(ArrayList(it.orEmpty()),login,id)
         }.onFailure {
             _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
+        }
+    }
+
+    private fun workWithRealmReposList(arrayList: ArrayList<String>, login: String, id: Int) {
+        var isShowLoader = true
+        if (arrayList.isNotEmpty()){
+            _repos.newValue(arrayList)
+            isShowLoader = false
+        }
+        getReposWithRetrofit(login,isShowLoader,id)
+    }
+
+    private fun getReposWithRetrofit(login: String, isShowLoader: Boolean, id: Int) {
+        if (isShowLoader){
+            _state.newEvent(BaseStates.LoadingState)
+        }
+        viewModelScope.launch {
+            runCatching {
+                usersRepository.getUsersReposWithRetrofit(login)
+            }.onSuccess {
+                val list = ArrayList<String>()
+                for (model in it){
+                    list.add(model.repo)
+                }
+                usersRepository.setReposToRealm(list,id)
+                _state.newEvent(BaseStates.SuccessState)
+                _repos.newValue(list)
+            }.onFailure {
+                _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
+            }
         }
     }
 

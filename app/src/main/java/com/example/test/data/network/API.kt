@@ -1,5 +1,6 @@
 package com.example.test.data.network
 
+import com.example.test.domain.models.ReposModel
 import com.example.test.domain.models.UserModel
 import retrofit2.Response
 import retrofit2.http.GET
@@ -11,5 +12,5 @@ interface API {
     suspend fun getUsers() : Response<ArrayList<UserModel>>
 
     @GET("users/{login}/repos")
-    suspend fun getRepos(@Path("login") login:String):Response<ArrayList<String>>
+    suspend fun getRepos(@Path("login") login:String):Response<ArrayList<ReposModel>>
 }
