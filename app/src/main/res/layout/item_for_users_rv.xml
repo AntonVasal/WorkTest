@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="userModel"
+            type="com.example.test.domain.models.UserModel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/item_card"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="20dp"
+        app:strokeColor="@color/material_on_surface_disabled"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:id="@+id/item_for_result_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/img_result_card_view"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                app:cardCornerRadius="25dp">
+
+                <ImageView
+                    android:id="@+id/user_results_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/user_photo"
+                    android:scaleType="centerCrop"
+                    imageUrl="@{userModel.avatarUrl}" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/user_results_name"
+                style="@style/RecyclerItemText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_weight="30"
+                tools:text="@string/nickname"
+                android:text="@{userModel.login}"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
