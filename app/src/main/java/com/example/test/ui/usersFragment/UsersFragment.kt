@@ -60,7 +60,7 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
 
     private fun getChangesCount() {
         val mainUserModel = usersViewModel.getMainUserModelFromRealm()
-        if (mainUserModel != null && mainUserModel.changesCount!= 0){
+        if (mainUserModel.changesCount!= 0){
             binding.changesCountCard.visible()
             binding.changesCountText.text = mainUserModel.changesCount.toString()
         }

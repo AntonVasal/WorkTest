@@ -10,6 +10,7 @@ import com.example.test.domain.mappers.mainUserRealmToModel
 import com.example.test.domain.mappers.realmToModel
 import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
+import com.example.test.domain.realmObjects.MainUserRealmObject
 import com.example.test.domain.realmObjects.UserRealmObject
 import com.example.test.utils.extensions.newEvent
 import com.example.test.utils.extensions.newValue
@@ -82,18 +83,13 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
     }
 
     private fun workWithRealmReposList(arrayList: ArrayList<String>, login: String, id: Int) {
-        var isShowLoader = true
         if (arrayList.isNotEmpty()){
             _repos.newValue(arrayList)
-            isShowLoader = false
         }
-        getReposWithRetrofit(login,isShowLoader,id)
+        getReposWithRetrofit(login,id)
     }
 
-    private fun getReposWithRetrofit(login: String, isShowLoader: Boolean, id: Int) {
-        if (isShowLoader){
-            _state.newEvent(BaseStates.LoadingState)
-        }
+    private fun getReposWithRetrofit(login: String, id: Int) {
         viewModelScope.launch {
             runCatching {
                 usersRepository.getUsersReposWithRetrofit(login)
@@ -103,7 +99,6 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
                     list.add(model.repo)
                 }
                 usersRepository.setReposToRealm(list,id)
-                _state.newEvent(BaseStates.SuccessState)
                 _repos.newValue(list)
             }.onFailure {
                 _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
@@ -115,6 +110,6 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
         usersRepository.setMainUserToRealm(mainUserModel)
     }
 
-    fun getMainUserModelFromRealm() = usersRepository.getMainUserWithRealm()?.let { mainUserRealmToModel(it) }
+    fun getMainUserModelFromRealm() = mainUserRealmToModel(usersRepository.getMainUserWithRealm() ?: MainUserRealmObject())
 
 }
