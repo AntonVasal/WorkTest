@@ -12,25 +12,22 @@ import androidx.core.app.NotificationCompat
 import com.example.test.R
 import com.example.test.domain.models.MainUserModel
 import com.example.test.ui.MainActivity
+import com.example.test.utils.constants.*
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.greenrobot.eventbus.EventBus
 
 class FCMService : FirebaseMessagingService() {
 
-    private val NOTIFICATION_CHANNEL_ID = "notification"
-    private val NOTIFICATION_ID = 100
-
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.i("FCM", token)
+        Log.i(FCM, token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val id = message.data["id"]?.toInt() ?: 0
-        val changesCount = message.data["changesCount"]?.toInt() ?: 0
+        val id = message.data[ID]?.toInt() ?: 0
+        val changesCount = message.data[CHANGES_COUNT]?.toInt() ?: 0
         EventBus.getDefault().postSticky(MainUserModel(id, changesCount))
 
         val title = message.notification!!.title

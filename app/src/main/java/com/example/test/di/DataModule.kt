@@ -3,6 +3,7 @@ package com.example.test.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.test.data.network.API
+import com.example.test.utils.constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,7 @@ object DataModule {
                 .addInterceptor(ChuckerInterceptor.Builder(context).build())
                 .build())
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl("https://api.github.com/")
+        .baseUrl(BASE_URL)
         .build()
         .create(API::class.java)
 

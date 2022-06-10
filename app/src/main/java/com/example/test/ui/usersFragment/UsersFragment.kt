@@ -17,6 +17,7 @@ import com.example.test.domain.models.UserModel
 import com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView.ReposRecyclerViewAdapter
 import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.UsersRecyclerViewAdapter
 import com.example.test.ui.usersFragment.usersViewModel.UsersViewModel
+import com.example.test.utils.constants.MAIN_FRAGMENT
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -115,7 +116,7 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
             when (state) {
                 is BaseStates.ErrorState -> {
                     usersLoader.gone()
-                    Log.i("MainFragment",state.message)
+                    Log.i(MAIN_FRAGMENT,state.message)
                 }
                 is BaseStates.LoadingState -> usersLoader.visible()
                 is BaseStates.SuccessState -> usersLoader.gone()
