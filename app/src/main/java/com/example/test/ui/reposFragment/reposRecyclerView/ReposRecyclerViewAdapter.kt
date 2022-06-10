@@ -1,4 +1,4 @@
-package com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView
+package com.example.test.ui.reposFragment.reposRecyclerView
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.databinding.ItemForReposRvBinding
-import com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView.recyclerDiffCallback.RepoRecyclerDiffCallback
+import com.example.test.ui.reposFragment.reposRecyclerView.recyclerDiffCallback.RepoRecyclerDiffCallback
 
 class ReposRecyclerViewAdapter(private val context: Context): RecyclerView.Adapter<ReposRVHolder>() {
 

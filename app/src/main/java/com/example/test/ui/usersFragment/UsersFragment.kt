@@ -2,25 +2,21 @@ package com.example.test.ui.usersFragment
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
-import com.bumptech.glide.Glide
+import androidx.navigation.fragment.findNavController
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
 import com.example.test.core.baseStates.BaseStates
-import com.example.test.databinding.DialogBottomSheetForUserBinding
 import com.example.test.databinding.FragmentUsersBinding
 import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
-import com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView.ReposRecyclerViewAdapter
 import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.UsersRecyclerViewAdapter
 import com.example.test.ui.usersFragment.usersViewModel.UsersViewModel
 import com.example.test.utils.constants.MAIN_FRAGMENT
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -31,9 +27,6 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
     BaseFragment<FragmentUsersBinding>() {
 
     private val usersViewModel: UsersViewModel by viewModels()
-    private lateinit var bottomSheetDialog : BottomSheetDialog
-    private lateinit var dialogBinding:DialogBottomSheetForUserBinding
-    private lateinit var dialogAdapter:ReposRecyclerViewAdapter
 
     override fun onStart() {
         super.onStart()
@@ -49,15 +42,19 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
 
         getChangesCount()
 
-        configureDialog()
-        observeRepos()
-
-        val adapter = UsersRecyclerViewAdapter(requireContext()) { createDialog(it) }
+        val adapter = UsersRecyclerViewAdapter(requireContext()) { openReposFragment(it) }
         binding.usersRecyclerView.adapter = adapter
-
         usersViewModel.users.observeNotNull(viewLifecycleOwner) {
            adapter.submitList(it)
         }
+    }
+
+    private fun openReposFragment(userModel: UserModel) {
+        val action = UsersFragmentDirections.actionUsersFragmentToReposFragment()
+        action.id = userModel.id
+        action.login = userModel.login
+        action.imageUrl = userModel.avatarUrl
+        findNavController().navigate(action)
     }
 
     private fun getChangesCount() {
@@ -77,30 +74,6 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
             usersViewModel.getUsersWithRetrofit(binding.usersRecyclerView.isEmpty())
             usersViewModel.setMainUserToRealm(mainUserModel)
         }
-    }
-
-    private fun configureDialog() {
-        dialogAdapter = ReposRecyclerViewAdapter(requireContext())
-        bottomSheetDialog = BottomSheetDialog(requireContext())
-        dialogBinding = DialogBottomSheetForUserBinding.inflate(LayoutInflater.from(context))
-        bottomSheetDialog.setContentView(dialogBinding.root)
-        dialogBinding.reposList.adapter = dialogAdapter
-    }
-
-    private fun observeRepos() {
-        usersViewModel.repos.observeNotNull(viewLifecycleOwner){
-            if (bottomSheetDialog.isShowing){
-                dialogAdapter.submitList(it)
-            }
-        }
-    }
-
-    private fun createDialog(userModel: UserModel) {
-        usersViewModel.getUserReposWithRealm(userModel.login,userModel.id)
-        dialogBinding.dialogText.text = userModel.login
-        Glide.with(requireContext()).load(userModel.avatarUrl).placeholder(R.drawable.ic_user_main)
-            .error(R.drawable.ic_user_main).into(dialogBinding.dialogImage)
-        bottomSheetDialog.show()
     }
 
     private fun observeStates() {

@@ -9,5 +9,25 @@
         android:id="@+id/usersFragment"
         android:name="com.example.test.ui.usersFragment.UsersFragment"
         android:label="UsersFragment"
-        tools:layout="@layout/fragment_users"/>
+        tools:layout="@layout/fragment_users">
+        <action
+            android:id="@+id/action_usersFragment_to_reposFragment"
+            app:destination="@id/reposFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/reposFragment"
+        android:name="com.example.test.ui.reposFragment.ReposFragment"
+        android:label="ReposFragment"
+        tools:layout="@layout/fragment_repos" >
+        <argument
+            android:name="login"
+            app:argType="string"
+            android:defaultValue=""/>
+        <argument android:name="id"
+            app:argType="integer"
+            android:defaultValue="0"/>
+        <argument android:name="imageUrl"
+            app:argType="string"
+            android:defaultValue="0"/>
+    </fragment>
 </navigation>

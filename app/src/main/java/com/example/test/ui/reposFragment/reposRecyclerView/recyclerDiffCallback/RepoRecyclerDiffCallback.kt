@@ -1,4 +1,4 @@
-package com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView.recyclerDiffCallback
+package com.example.test.ui.reposFragment.reposRecyclerView.recyclerDiffCallback
 
 import androidx.recyclerview.widget.DiffUtil
 

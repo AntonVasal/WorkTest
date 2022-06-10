@@ -25,9 +25,6 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
     private val _users = MutableLiveData<ArrayList<UserModel>>()
     val users: LiveData<ArrayList<UserModel>> = _users
 
-    private val _repos = MutableLiveData<ArrayList<String>>()
-    val repos:LiveData<ArrayList<String>> = _repos
-
     init {
         getUsersWithRealm()
     }
@@ -70,40 +67,6 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
             isEmpty = false
         }
         getUsersWithRetrofit(isEmpty)
-    }
-
-    fun getUserReposWithRealm(login:String,id:Int){
-        runCatching {
-            usersRepository.getReposWithRealm(id)
-        }.onSuccess {
-            workWithRealmReposList(ArrayList(it.orEmpty()),login,id)
-        }.onFailure {
-            _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
-        }
-    }
-
-    private fun workWithRealmReposList(arrayList: ArrayList<String>, login: String, id: Int) {
-        if (arrayList.isNotEmpty()){
-            _repos.newValue(arrayList)
-        }
-        getReposWithRetrofit(login,id)
-    }
-
-    private fun getReposWithRetrofit(login: String, id: Int) {
-        viewModelScope.launch {
-            runCatching {
-                usersRepository.getUsersReposWithRetrofit(login)
-            }.onSuccess {
-                val list = ArrayList<String>()
-                for (model in it){
-                    list.add(model.repo)
-                }
-                usersRepository.setReposToRealm(list,id)
-                _repos.newValue(list)
-            }.onFailure {
-                _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
-            }
-        }
     }
 
     fun setMainUserToRealm(mainUserModel: MainUserModel) {
