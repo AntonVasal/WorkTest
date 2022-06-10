@@ -2,12 +2,13 @@ package com.example.test.ui.usersFragment.usersViewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.test.core.baseEvent.Event
 import com.example.test.core.baseStates.BaseStates
+import com.example.test.core.baseViewModel.BaseViewModel
 import com.example.test.data.repositories.UsersRepository
+import com.example.test.domain.mappers.mainUserRealmToModel
 import com.example.test.domain.mappers.realmToModel
+import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
 import com.example.test.domain.realmObjects.UserRealmObject
 import com.example.test.utils.extensions.newEvent
@@ -18,10 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(private val usersRepository: UsersRepository) :
-    ViewModel() {
-
-    private val _state = MutableLiveData<Event<BaseStates>>()
-    val state: LiveData<Event<BaseStates>> = _state
+    BaseViewModel<BaseStates>() {
 
     private val _users = MutableLiveData<ArrayList<UserModel>>()
     val users: LiveData<ArrayList<UserModel>> = _users
@@ -112,5 +110,11 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
             }
         }
     }
+
+    fun setMainUserToRealm(mainUserModel: MainUserModel) {
+        usersRepository.setMainUserToRealm(mainUserModel)
+    }
+
+    fun getMainUserModelFromRealm() = usersRepository.getMainUserWithRealm()?.let { mainUserRealmToModel(it) }
 
 }

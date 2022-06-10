@@ -1,9 +1,12 @@
 package com.example.test.data.repositories
 
 import com.example.test.data.network.API
+import com.example.test.domain.mappers.mainUserModelToRo
 import com.example.test.domain.mappers.modelToRealm
+import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.ReposModel
 import com.example.test.domain.models.UserModel
+import com.example.test.domain.realmObjects.MainUserRealmObject
 import com.example.test.domain.realmObjects.ReposRealmObject
 import com.example.test.domain.realmObjects.UserRealmObject
 import io.realm.Realm
@@ -38,6 +41,14 @@ class UsersRepository @Inject constructor(private val api: API, private val real
             obj.id = id
             obj.repos.addAll(list)
             it.insertOrUpdate(obj)
+        }
+    }
+
+    fun getMainUserWithRealm():MainUserRealmObject? = realm.where(MainUserRealmObject::class.java).findFirst()
+
+    fun setMainUserToRealm(mainUserModel: MainUserModel){
+        realm.executeTransactionAsync{
+            it.insertOrUpdate(mainUserModelToRo(mainUserModel))
         }
     }
 

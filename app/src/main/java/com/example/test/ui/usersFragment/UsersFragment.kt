@@ -1,14 +1,17 @@
 package com.example.test.ui.usersFragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
 import com.example.test.core.baseStates.BaseStates
 import com.example.test.databinding.FragmentUsersBinding
+import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
 import com.example.test.ui.usersFragment.usersRecyclerView.UsersRecyclerViewAdapter
 import com.example.test.ui.usersFragment.usersViewModel.UsersViewModel
@@ -16,6 +19,9 @@ import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 @AndroidEntryPoint
 class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
@@ -27,10 +33,19 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
 
+    override fun onStart() {
+        super.onStart()
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         observeStates()
+
+        getChangesCount()
 
         configureDialog()
         observeRepos()
@@ -40,6 +55,25 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
 
         usersViewModel.users.observeNotNull(viewLifecycleOwner) {
            adapter.submitList(it)
+        }
+    }
+
+    private fun getChangesCount() {
+        val mainUserModel = usersViewModel.getMainUserModelFromRealm()
+        if (mainUserModel != null && mainUserModel.changesCount!= 0){
+            binding.changesCountCard.visible()
+            binding.changesCountText.text = mainUserModel.changesCount.toString()
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onEvent(mainUserModel: MainUserModel ) {
+        val changesCount = mainUserModel.changesCount
+        if (changesCount!=0){
+            binding.changesCountCard.visible()
+            binding.changesCountText.text = changesCount.toString()
+            usersViewModel.getUsersWithRetrofit(binding.usersRecyclerView.isEmpty())
+            usersViewModel.setMainUserToRealm(mainUserModel)
         }
     }
 
@@ -82,12 +116,19 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
             when (state) {
                 is BaseStates.ErrorState -> {
                     usersLoader.gone()
-                    Toast.makeText(context,"Failed",Toast.LENGTH_LONG).show()
+                    Log.i("MainFragment",state.message)
                 }
                 is BaseStates.LoadingState -> usersLoader.visible()
                 is BaseStates.SuccessState -> usersLoader.gone()
             }
         }
+    }
+
+    override fun onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this)
+        }
+        super.onDestroy()
     }
 
 }
