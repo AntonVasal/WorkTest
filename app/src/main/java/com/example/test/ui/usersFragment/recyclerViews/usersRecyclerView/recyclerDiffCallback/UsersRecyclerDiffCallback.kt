@@ -1,9 +1,9 @@
-package com.example.test.ui.usersFragment.usersRecyclerView.recyclerDiffCallback
+package com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.recyclerDiffCallback
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.test.domain.models.UserModel
 
-class RecyclerDiffCallback : DiffUtil.ItemCallback<UserModel>() {
+class UsersRecyclerDiffCallback : DiffUtil.ItemCallback<UserModel>() {
 
     override fun areItemsTheSame(oldItem: UserModel, newItem: UserModel) =
         oldItem.id == newItem.id

@@ -1,4 +1,4 @@
-package com.example.test.ui.usersFragment.usersRecyclerView
+package com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test.databinding.ItemForUsersRvBinding

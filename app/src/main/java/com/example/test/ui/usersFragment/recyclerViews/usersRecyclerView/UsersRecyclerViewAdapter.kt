@@ -1,4 +1,4 @@
-package com.example.test.ui.usersFragment.usersRecyclerView
+package com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.test.R
 import com.example.test.databinding.ItemForUsersRvBinding
 import com.example.test.domain.models.UserModel
-import com.example.test.ui.usersFragment.usersRecyclerView.recyclerDiffCallback.RecyclerDiffCallback
+import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.recyclerDiffCallback.UsersRecyclerDiffCallback
 import com.example.test.utils.extensions.clickWithDebounce
 
 
@@ -17,7 +17,7 @@ class UsersRecyclerViewAdapter(
     private val itemClick: (UserModel) -> Unit
 ) : RecyclerView.Adapter<UsersRVHolder>() {
 
-    private val differ = AsyncListDiffer(this, RecyclerDiffCallback())
+    private val differ = AsyncListDiffer(this, UsersRecyclerDiffCallback())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersRVHolder {
         val binding = DataBindingUtil.inflate<ItemForUsersRvBinding>(LayoutInflater.from(context),

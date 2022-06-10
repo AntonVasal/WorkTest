@@ -2,18 +2,20 @@ package com.example.test.ui.usersFragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
 import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
 import com.example.test.core.baseStates.BaseStates
+import com.example.test.databinding.DialogBottomSheetForUserBinding
 import com.example.test.databinding.FragmentUsersBinding
 import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
-import com.example.test.ui.usersFragment.usersRecyclerView.UsersRecyclerViewAdapter
+import com.example.test.ui.usersFragment.recyclerViews.reposRecyclerView.ReposRecyclerViewAdapter
+import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.UsersRecyclerViewAdapter
 import com.example.test.ui.usersFragment.usersViewModel.UsersViewModel
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
@@ -29,9 +31,8 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
 
     private val usersViewModel: UsersViewModel by viewModels()
     private lateinit var bottomSheetDialog : BottomSheetDialog
-    private lateinit var listView:ListView
-    private lateinit var imageView: ImageView
-    private lateinit var textView: TextView
+    private lateinit var dialogBinding:DialogBottomSheetForUserBinding
+    private lateinit var dialogAdapter:ReposRecyclerViewAdapter
 
     override fun onStart() {
         super.onStart()
@@ -78,28 +79,26 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
     }
 
     private fun configureDialog() {
+        dialogAdapter = ReposRecyclerViewAdapter(requireContext())
         bottomSheetDialog = BottomSheetDialog(requireContext())
-        bottomSheetDialog.setContentView(R.layout.dialog_bottom_sheet_for_user)
-        listView = bottomSheetDialog.findViewById(R.id.repos_list)!!
-        imageView= bottomSheetDialog.findViewById(R.id.dialog_image)!!
-        textView = bottomSheetDialog.findViewById (R.id.dialog_text)!!
+        dialogBinding = DialogBottomSheetForUserBinding.inflate(LayoutInflater.from(context))
+        bottomSheetDialog.setContentView(dialogBinding.root)
+        dialogBinding.reposList.adapter = dialogAdapter
     }
 
     private fun observeRepos() {
         usersViewModel.repos.observeNotNull(viewLifecycleOwner){
             if (bottomSheetDialog.isShowing){
-                listView.adapter = usersViewModel.repos.value?.let {
-                    ArrayAdapter( requireContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, it.toArray())
-                }
+                dialogAdapter.submitList(it)
             }
         }
     }
 
     private fun createDialog(userModel: UserModel) {
         usersViewModel.getUserReposWithRealm(userModel.login,userModel.id)
-        textView.text = userModel.login
+        dialogBinding.dialogText.text = userModel.login
         Glide.with(requireContext()).load(userModel.avatarUrl).placeholder(R.drawable.ic_user_main)
-            .error(R.drawable.ic_user_main).into(imageView)
+            .error(R.drawable.ic_user_main).into(dialogBinding.dialogImage)
         bottomSheetDialog.show()
     }
 
