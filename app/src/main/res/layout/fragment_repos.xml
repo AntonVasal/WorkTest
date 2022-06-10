@@ -4,71 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="imageUrl"
             type="String" />
+
         <variable
             name="login"
             type="String" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/blue_dirty">
+        android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/repos_image_card"
-            android:layout_width="170dp"
-            android:layout_height="170dp"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="85dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/repos_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/repos_image"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                imageUrl="@{imageUrl}"
-                android:contentDescription="@string/image" />
-        </androidx.cardview.widget.CardView>
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/repos_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:text="@{login}"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/repos_image_card" />
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/repos_image_card"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="85dp">
+
+                <ImageView
+                    android:id="@+id/repos_image"
+                    imageUrl="@{imageUrl}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/image" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/repos_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:text="@{login}"
+                    android:textColor="@color/black"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="30dp"
+                    tools:text="text" />
+            </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
 
-        <ProgressBar
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/repos_loader"
-            android:indeterminateTint="@color/black"
-            android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+    <ProgressBar
+        android:id="@+id/repos_loader"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        tools:visibility="visible" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/repos_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/repos_text" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/repos_list"
+        android:background="@color/blue_dirty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout></layout>
