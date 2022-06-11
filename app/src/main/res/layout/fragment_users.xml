@@ -16,6 +16,7 @@
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 app:elevation="0dp"
+                android:visibility="@{isChangesCountVisible ? View.VISIBLE : View.GONE}"
                 android:id="@+id/users_app_bar_layout"
                 android:background="@color/white"
                 android:layout_height="wrap_content">
