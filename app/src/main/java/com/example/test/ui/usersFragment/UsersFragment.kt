@@ -58,8 +58,10 @@ class UsersFragment(
     private fun getChangesCount() {
         val mainUserModel = viewModel.getMainUserModelFromRealm()
         if (mainUserModel.changesCount!= 0){
-            binding.changesCountCard.visible()
-            binding.changesCountText.text = mainUserModel.changesCount.toString()
+            binding.apply {
+                isChangesCountVisible = true
+                changesCountText.text = mainUserModel.changesCount.toString()
+            }
         }
     }
 
@@ -67,9 +69,11 @@ class UsersFragment(
     fun onEvent(mainUserModel: MainUserModel ) {
         val changesCount = mainUserModel.changesCount
         if (changesCount!=0){
-            binding.changesCountCard.visible()
-            binding.changesCountText.text = changesCount.toString()
-            viewModel.getUsersWithRetrofit(binding.usersRecyclerView.isEmpty())
+            binding.apply {
+                isChangesCountVisible = true
+                changesCountText.text = changesCount.toString()
+                viewModel.getUsersWithRetrofit(usersRecyclerView.isEmpty())
+            }
             viewModel.setMainUserToRealm(mainUserModel)
         }
     }

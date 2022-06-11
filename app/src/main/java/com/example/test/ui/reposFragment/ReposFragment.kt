@@ -3,15 +3,13 @@ package com.example.test.ui.reposFragment
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
 import com.example.test.core.baseStates.BaseStates
 import com.example.test.databinding.FragmentReposBinding
-import com.example.test.domain.models.UserModel
-import com.example.test.ui.reposFragment.reposViewModel.ReposViewModel
 import com.example.test.ui.reposFragment.reposRecyclerView.ReposRecyclerViewAdapter
+import com.example.test.ui.reposFragment.reposViewModel.ReposViewModel
 import com.example.test.utils.constants.REPOS_FRAGMENT
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible

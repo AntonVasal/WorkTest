@@ -13,24 +13,41 @@
         android:id="@+id/item_card"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginVertical="10dp"
-        android:layout_marginHorizontal="20dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="10dp"
+        android:layout_marginVertical="5dp"
+        app:cardCornerRadius="15dp"
+        android:layout_marginHorizontal="10dp"
+        app:cardElevation="0dp"
         app:strokeColor="@color/material_on_surface_disabled"
         app:strokeWidth="1dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="30dp"
+                android:id="@+id/repos_item_image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:contentDescription="@string/image"
+                android:src="@drawable/ic_baseline_folder_open_24" />
 
-        <TextView
-            android:id="@+id/user_results_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="8dp"
-            android:layout_weight="30"
-            android:text="@{repo}"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            tools:text="@string/nickname" />
+            <TextView
+                android:id="@+id/user_results_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_weight="30"
+                app:layout_constraintStart_toEndOf="@id/repos_item_image"
+                android:text="@{repo}"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                tools:text="@string/nickname" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.138" />
         <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/drawable/background_for_changes_count_text.xml" value="0.138" />
+        <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/drawable/ic_baseline_folder_open_24.xml" value="0.138" />
+        <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/drawable/ic_launcher_background.xml" value="0.138" />
         <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/drawable/ic_user_main.xml" value="0.138" />
         <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
         <entry key="..\:/Samsung_project_for_competition/Test/app/src/main/res/layout/dialog_bottom_sheet_for_user.xml" value="0.22826086956521738" />
