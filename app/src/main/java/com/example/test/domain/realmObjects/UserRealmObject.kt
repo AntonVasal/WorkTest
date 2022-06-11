@@ -10,5 +10,5 @@ open class UserRealmObject : RealmObject() {
     var nodeId: String = ""
     var avatarUrl: String = ""
     var reposUrl: String = ""
-//    var list: RealmList<String> = RealmList()
+    var changesCount: Int = 0
 }

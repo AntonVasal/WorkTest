@@ -1,6 +1,6 @@
 package com.example.test.domain.models
 
-data class MainUserModel(
+data class MessageModel(
     var id:Int,
     var changesCount:Int
 )

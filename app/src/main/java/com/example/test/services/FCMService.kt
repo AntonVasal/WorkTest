@@ -10,7 +10,7 @@ import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.test.R
-import com.example.test.domain.models.MainUserModel
+import com.example.test.domain.models.MessageModel
 import com.example.test.ui.MainActivity
 import com.example.test.utils.constants.*
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -28,7 +28,7 @@ class FCMService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         val id = message.data[ID]?.toInt() ?: 0
         val changesCount = message.data[CHANGES_COUNT]?.toInt() ?: 0
-        EventBus.getDefault().postSticky(MainUserModel(id, changesCount))
+        EventBus.getDefault().postSticky(MessageModel(id, changesCount))
 
         val title = message.notification!!.title
         val body = message.notification!!.body
@@ -50,6 +50,10 @@ class FCMService : FirebaseMessagingService() {
             .setWhen(System.currentTimeMillis())
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentTitle(title).build()
+        createNotificationManager(notification,title,context)
+    }
+
+    private fun createNotificationManager(notification: Notification,title:String?,context: Context){
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager

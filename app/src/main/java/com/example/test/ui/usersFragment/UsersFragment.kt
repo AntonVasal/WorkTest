@@ -3,16 +3,15 @@ package com.example.test.ui.usersFragment
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.view.isEmpty
 import androidx.navigation.fragment.findNavController
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
 import com.example.test.core.baseStates.BaseStates
 import com.example.test.databinding.FragmentUsersBinding
-import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
 import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.UsersRecyclerViewAdapter
 import com.example.test.ui.usersFragment.usersViewModel.UsersViewModel
+import com.example.test.domain.models.MessageModel
 import com.example.test.utils.constants.MAIN_FRAGMENT
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
@@ -37,9 +36,6 @@ class UsersFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        getChangesCount()
-
         val adapter = UsersRecyclerViewAdapter(requireContext()) { openReposFragment(it) }
         binding.usersRecyclerView.adapter = adapter
         viewModel.users.observeNotNull(viewLifecycleOwner) {
@@ -55,26 +51,11 @@ class UsersFragment(
         findNavController().navigate(action)
     }
 
-    private fun getChangesCount() {
-        val mainUserModel = viewModel.getMainUserModelFromRealm()
-        if (mainUserModel.changesCount!= 0){
-            binding.apply {
-                isChangesCountVisible = true
-                changesCountText.text = mainUserModel.changesCount.toString()
-            }
-        }
-    }
-
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onEvent(mainUserModel: MainUserModel ) {
-        val changesCount = mainUserModel.changesCount
+    fun onEvent(data: MessageModel) {
+        val changesCount = data.changesCount
         if (changesCount!=0){
-            binding.apply {
-                isChangesCountVisible = true
-                changesCountText.text = changesCount.toString()
-                viewModel.getUsersWithRetrofit(usersRecyclerView.isEmpty())
-            }
-            viewModel.setMainUserToRealm(mainUserModel)
+            viewModel.updateUserInRealm(data.id,data.changesCount)
         }
     }
 

@@ -6,15 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.test.core.baseStates.BaseStates
 import com.example.test.core.baseViewModel.BaseViewModel
 import com.example.test.data.repositories.UsersRepository
-import com.example.test.domain.mappers.mainUserRealmToModel
 import com.example.test.domain.mappers.realmToModel
-import com.example.test.domain.models.MainUserModel
 import com.example.test.domain.models.UserModel
-import com.example.test.domain.realmObjects.MainUserRealmObject
 import com.example.test.domain.realmObjects.UserRealmObject
 import com.example.test.utils.extensions.newEvent
 import com.example.test.utils.extensions.newValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,17 +24,22 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
     val users: LiveData<ArrayList<UserModel>> = _users
 
     init {
-        getUsersWithRealm()
+        getUsersWithRealm(true)
     }
 
-    fun getUsersWithRetrofit(isEmpty: Boolean) {
-        if (isEmpty){
+    private fun getUsersWithRetrofit(isEmpty: Boolean) {
+        if (isEmpty) {
             _state.newEvent(BaseStates.LoadingState)
         }
         viewModelScope.launch {
             runCatching {
                 usersRepository.getUsersWithRetrofit()
             }.onSuccess {
+                if (!isEmpty) {
+                    users.value?.forEach { model ->
+                        it.find { obj -> obj.id == model.id }?.changesCount = model.changesCount
+                    }
+                }
                 usersRepository.setUsersToRealm(it)
                 _state.newEvent(BaseStates.SuccessState)
                 _users.newValue(it)
@@ -46,19 +49,19 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
         }
     }
 
-    private fun getUsersWithRealm() {
+    private fun getUsersWithRealm(isNeedRetrofitUpdate: Boolean) {
         runCatching {
             usersRepository.getUsersWithRealm()
         }.onSuccess {
-            workWithRealmList(it)
+            workWithRealmList(it, isNeedRetrofitUpdate)
         }.onFailure {
             _state.newEvent(BaseStates.ErrorState(it.stackTraceToString()))
         }
     }
 
-    private fun workWithRealmList(list: List<UserRealmObject>) {
+    private fun workWithRealmList(list: List<UserRealmObject>, isNeedRetrofitUpdate: Boolean) {
         var isEmpty = true
-        if(list.isNotEmpty()){
+        if (list.isNotEmpty()) {
             val it = ArrayList<UserModel>()
             for (obj in list) {
                 it.add(realmToModel(obj))
@@ -66,13 +69,20 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
             _users.newValue(it)
             isEmpty = false
         }
-        getUsersWithRetrofit(isEmpty)
+        if (isNeedRetrofitUpdate) {
+            getUsersWithRetrofit(isEmpty)
+        }
     }
 
-    fun setMainUserToRealm(mainUserModel: MainUserModel) {
-        usersRepository.setMainUserToRealm(mainUserModel)
+    fun updateUserInRealm(id: Int, changesCount: Int) {
+        viewModelScope.launch {
+            runCatching {
+                usersRepository.updateUserInRealm(id, changesCount)
+            }.onSuccess {
+                getUsersWithRealm(false)
+            }
+        }
     }
 
-    fun getMainUserModelFromRealm() = mainUserRealmToModel(usersRepository.getMainUserWithRealm() ?: MainUserRealmObject())
 
 }

@@ -1,4 +1,4 @@
-package com.example.test.domain.realmObjects
+package com.example.test.unUsed
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

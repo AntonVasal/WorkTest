@@ -8,4 +8,5 @@ data class UserModel(
     @SerializedName("node_id") var nodeId: String,
     @SerializedName("avatar_url") var avatarUrl: String,
     @SerializedName("repos_url") var reposUrl: String,
+    @Transient var changesCount:Int = 0
 )
