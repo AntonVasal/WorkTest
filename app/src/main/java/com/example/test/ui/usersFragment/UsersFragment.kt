@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.view.isEmpty
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.test.R
 import com.example.test.core.baseFragment.BaseFragment
@@ -21,12 +20,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.reflect.KClass
 
 @AndroidEntryPoint
-class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
-    BaseFragment<FragmentUsersBinding>() {
-
-    private val usersViewModel: UsersViewModel by viewModels()
+class UsersFragment(
+    override val layoutId: Int = R.layout.fragment_users,
+    override val viewModelClass: KClass<UsersViewModel> = UsersViewModel::class
+) : BaseFragment<FragmentUsersBinding,UsersViewModel,BaseStates>(){
 
     override fun onStart() {
         super.onStart()
@@ -37,14 +37,12 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = viewLifecycleOwner
-        observeStates()
 
         getChangesCount()
 
         val adapter = UsersRecyclerViewAdapter(requireContext()) { openReposFragment(it) }
         binding.usersRecyclerView.adapter = adapter
-        usersViewModel.users.observeNotNull(viewLifecycleOwner) {
+        viewModel.users.observeNotNull(viewLifecycleOwner) {
            adapter.submitList(it)
         }
     }
@@ -58,7 +56,7 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
     }
 
     private fun getChangesCount() {
-        val mainUserModel = usersViewModel.getMainUserModelFromRealm()
+        val mainUserModel = viewModel.getMainUserModelFromRealm()
         if (mainUserModel.changesCount!= 0){
             binding.changesCountCard.visible()
             binding.changesCountText.text = mainUserModel.changesCount.toString()
@@ -71,20 +69,12 @@ class UsersFragment(override val layoutId: Int = R.layout.fragment_users) :
         if (changesCount!=0){
             binding.changesCountCard.visible()
             binding.changesCountText.text = changesCount.toString()
-            usersViewModel.getUsersWithRetrofit(binding.usersRecyclerView.isEmpty())
-            usersViewModel.setMainUserToRealm(mainUserModel)
+            viewModel.getUsersWithRetrofit(binding.usersRecyclerView.isEmpty())
+            viewModel.setMainUserToRealm(mainUserModel)
         }
     }
 
-    private fun observeStates() {
-        usersViewModel.state.observeNotNull(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { state ->
-                onStateChanged(state)
-            }
-        }
-    }
-
-    private fun onStateChanged(state: BaseStates) {
+    override fun onStateChanged(state: BaseStates) {
         binding.apply {
             when (state) {
                 is BaseStates.ErrorState -> {

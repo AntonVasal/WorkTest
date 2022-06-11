@@ -16,40 +16,33 @@ import com.example.test.utils.constants.REPOS_FRAGMENT
 import com.example.test.utils.extensions.gone
 import com.example.test.utils.extensions.visible
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.reflect.KClass
 
 @AndroidEntryPoint
-class ReposFragment(override val layoutId: Int = R.layout.fragment_repos) : BaseFragment<FragmentReposBinding>() {
+class ReposFragment(
+    override val layoutId: Int = R.layout.fragment_repos,
+    override val viewModelClass: KClass<ReposViewModel> = ReposViewModel::class
+) : BaseFragment<FragmentReposBinding,ReposViewModel,BaseStates>() {
 
-    private val reposViewModel: ReposViewModel by viewModels()
     private val args :ReposFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = viewLifecycleOwner
-        observeStates()
 
         binding.apply {
             imageUrl = args.imageUrl
             login = args.login
         }
-        reposViewModel.getUserReposWithRealm(args.login,args.id)
+        viewModel.getUserReposWithRealm(args.login,args.id)
 
         val adapter = ReposRecyclerViewAdapter(requireContext())
         binding.reposList.adapter = adapter
-        reposViewModel.repos.observe(viewLifecycleOwner){
+        viewModel.repos.observe(viewLifecycleOwner){
             adapter.submitList(it)
         }
     }
 
-    private fun observeStates() {
-        reposViewModel.state.observeNotNull(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { state ->
-                onStateChanged(state)
-            }
-        }
-    }
-
-    private fun onStateChanged(state: BaseStates) {
+    override fun onStateChanged(state: BaseStates) {
         binding.apply {
             when (state) {
                 is BaseStates.ErrorState -> {
