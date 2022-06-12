@@ -10,6 +10,8 @@ import com.example.test.databinding.ItemForUsersRvBinding
 import com.example.test.domain.models.UserModel
 import com.example.test.ui.usersFragment.recyclerViews.usersRecyclerView.recyclerDiffCallback.UsersRecyclerDiffCallback
 import com.example.test.utils.extensions.clickWithDebounce
+import com.example.test.utils.extensions.gone
+import com.example.test.utils.extensions.visible
 
 
 class UsersRecyclerViewAdapter(
@@ -28,6 +30,11 @@ class UsersRecyclerViewAdapter(
     override fun onBindViewHolder(holder: UsersRVHolder, position: Int) {
         val user = differ.currentList[position]
         holder.bind(user)
+        if(user.changesCount!=0){
+            holder.binding.changesCountCard.visible()
+        }else{
+            holder.binding.changesCountCard.gone()
+        }
         holder.itemView.clickWithDebounce {
             itemClick.invoke(user)
         }
