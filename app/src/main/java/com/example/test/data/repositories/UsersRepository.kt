@@ -14,7 +14,8 @@ class UsersRepository @Inject constructor(private val api: API, private val real
 
     suspend fun getUsersWithRetrofit(): ArrayList<UserModel> = api.getUsers().body()!!
 
-    fun getUsersWithRealm(): List<UserRealmObject> = realm.where(UserRealmObject::class.java).findAll().toList()
+    fun getUsersWithRealm(): List<UserRealmObject> =
+        realm.where(UserRealmObject::class.java).findAll().toList()
 
     fun setUsersToRealm(list: ArrayList<UserModel>) {
         val arrayList = ArrayList<UserRealmObject>()
@@ -29,18 +30,19 @@ class UsersRepository @Inject constructor(private val api: API, private val real
     }
 
     fun updateUserInRealm(id: Int, changesCount: Int) {
-        realm.executeTransactionAsync{
+        realm.executeTransaction {
             val user = it.where(UserRealmObject::class.java).equalTo(ID, id).findFirst()
             user?.changesCount = changesCount
         }
     }
 
-    suspend fun getUsersReposWithRetrofit(login:String):ArrayList<ReposModel> = api.getRepos(login).body()!!
+    suspend fun getUsersReposWithRetrofit(login: String): ArrayList<ReposModel> =
+        api.getRepos(login).body()!!
 
-    fun getReposWithRealm(id:Int): List<String>? = realm.where(ReposRealmObject::class.java)
-        .equalTo(ID,id).findFirst()?.repos?.toList()
+    fun getReposWithRealm(id: Int): List<String>? = realm.where(ReposRealmObject::class.java)
+        .equalTo(ID, id).findFirst()?.repos?.toList()
 
-    fun setReposToRealm(list: ArrayList<String>,id: Int){
+    fun setReposToRealm(list: ArrayList<String>, id: Int) {
         realm.executeTransactionAsync {
             val obj = ReposRealmObject()
             obj.id = id

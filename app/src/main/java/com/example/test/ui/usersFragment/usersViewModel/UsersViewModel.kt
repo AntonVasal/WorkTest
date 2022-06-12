@@ -12,7 +12,6 @@ import com.example.test.domain.realmObjects.UserRealmObject
 import com.example.test.utils.extensions.newEvent
 import com.example.test.utils.extensions.newValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,12 +74,10 @@ class UsersViewModel @Inject constructor(private val usersRepository: UsersRepos
     }
 
     fun updateUserInRealm(id: Int, changesCount: Int) {
-        viewModelScope.launch {
-            runCatching {
-                usersRepository.updateUserInRealm(id, changesCount)
-            }.onSuccess {
-                getUsersWithRealm(false)
-            }
+        runCatching {
+            usersRepository.updateUserInRealm(id,changesCount)
+        }.onSuccess {
+            getUsersWithRealm(false)
         }
     }
 

@@ -38,6 +38,7 @@ object DataModule {
         Realm.init(context)
         val realmConfiguration = RealmConfiguration
             .Builder()
+            .allowWritesOnUiThread(true)
             .build()
         Realm.setDefaultConfiguration(realmConfiguration)
         return Realm.getDefaultInstance()
